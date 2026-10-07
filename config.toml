@@ -1,0 +1,71 @@
+# =============================================================================
+# Settings for the Lakebase production starter.
+#
+# Copy this file to config.local.toml and edit the copy. git ignores
+# config.local.toml, so your workspace details stay out of version control.
+# The scripts use config.local.toml when it exists, otherwise this file.
+# =============================================================================
+
+[databricks]
+# A profile name from ~/.databrickscfg. Create one with:
+#   databricks auth login --host https://<your-workspace-url> --profile my-workspace
+profile = "my-workspace"
+
+# A SQL warehouse ID, used to run Unity Catalog SQL (create the source table,
+# query the history tables). Find it under SQL Warehouses > your warehouse >
+# Connection details, or run: databricks warehouses list --profile my-workspace
+warehouse_id = "replace-with-your-warehouse-id"
+
+[lakebase]
+# Project IDs: 1-63 characters, lowercase letters, numbers and hyphens.
+project_id = "acme-store"
+display_name = "Acme Store (production)"
+
+# Postgres major version: 16, 17 or 18. 17 is the default for new projects.
+pg_version = 17
+
+# Autoscaling range for the production compute, in Compute Units (CU).
+# 1 CU is roughly 2 GB of RAM. The gap between min and max can be at most 16 CU.
+min_cu = 1
+max_cu = 4
+
+# How far back you can restore or branch from (point-in-time recovery).
+history_retention_days = 7
+
+# Allow classic username/password logins for tools that can't use OAuth.
+# Off by default on new projects. This example turns it on only to show the
+# bi_reader password role. If you don't need password logins, set it to false.
+enable_password_login = true
+
+[unity_catalog]
+# An existing catalog where you can create schemas. Lakebase Change Data Feed
+# can't write to catalogs that use default storage, so pick one that has its
+# own storage location.
+catalog = "main"
+
+# Schema for curated ("gold") Delta tables. products lives here and is the
+# source that gets synced INTO Lakebase.
+gold_schema = "store_gold"
+
+# Schema for synced tables. A synced table's Unity Catalog schema name is also
+# the name of the Postgres schema it lands in, so this name appears on both
+# sides: <catalog>.store_serving.products in Unity Catalog and
+# store_serving.products in Postgres. The sync pipelines also keep their
+# bookkeeping tables here.
+serving_schema = "store_serving"
+
+# Schema that Lakebase Change Data Feed writes the lb_<table>_history tables INTO.
+history_schema = "store_history"
+
+[identities]
+# Databricks identities used by the example. scripts/02_create_demo_identities.py
+# creates them for you in a test workspace. In a real deployment, put the names
+# of identities you already have here and skip that script.
+deployer_sp = "acme-store-deployer"       # service principal: CI/CD, runs migrations
+app_sp = "acme-store-app"                 # service principal: the application
+analysts_group = "acme-store-analysts"    # Databricks group: read-only humans
+password_role = "bi_reader"               # native Postgres role: a BI tool with no OAuth
+
+# Databricks secret scope that holds the service principal secrets and the
+# bi_reader password. Never put secrets in this file.
+secret_scope = "acme-store"

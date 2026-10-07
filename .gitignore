@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# Your own settings and anything secret. Never commit these.
+config.local.toml
+.env
+.secrets/
+
+# Databricks / editor noise
+.databricks/
+.DS_Store
+.idea/
+.vscode/
