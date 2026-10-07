@@ -4,7 +4,7 @@ A small, complete example of running **Databricks Lakebase** (managed Postgres) 
 
 It is written for people who are new to Databricks. Every script explains what it does while it runs, and every step has a guide in [`docs/`](docs/) that explains the why.
 
-> Everything in this repo was run end to end against a real Databricks workspace (AWS) in October 2026, with Databricks CLI v1.18.0 and databricks-sdk 0.147.0. Where the platform surprised us, the docs say so.
+> Everything in this repo was run end to end against a real Databricks workspace (AWS) in October 2026: from a laptop with Databricks CLI v1.18.0 and databricks-sdk 0.147.0, and as a notebook on serverless compute (Python 3.10). Where the platform surprised us, the docs say so.
 
 ## What you'll build
 
