@@ -163,6 +163,8 @@ run_step("01_create_project.py")
 # MAGIC ## Steps 2 and 3: identities and project permissions (layer 1)
 # MAGIC Step 2 creates two service principals (one for CI/CD, one for the app), an analysts group with you in it, and a secret scope for their OAuth secrets. Skip it if you bring your own identities.
 # MAGIC
+# MAGIC **Run step 2 once from a terminal first.** Databricks won't create OAuth secrets for service principals with a notebook's own credentials (in our test the call came back `PermissionDenied`, while the same call worked from a laptop after `databricks auth login`). So run `python scripts/02_create_demo_identities.py` from your laptop, or generate the secrets in the UI as the error message explains. After that, this cell finds everything in place and skips it.
+# MAGIC
 # MAGIC Step 3 grants **project permissions**, which control the *infrastructure* (branches, compute, settings). Only CI/CD gets one. The app and the analysts don't need any, because logging in to Postgres is decided by layer 2. [Guide](https://github.com/deepbasu123/lakebase-production-starter/blob/main/docs/03-identities-and-project-permissions.md)
 
 # COMMAND ----------

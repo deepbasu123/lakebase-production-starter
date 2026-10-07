@@ -111,7 +111,7 @@ Then run the steps one at a time (recommended the first time, so you can read wh
 2. Open `notebooks/lakebase_production_walkthrough` and attach serverless compute. Run the settings cell once to create the widgets, fill in **catalog** and **warehouse_id**, then run it again.
 3. Run the cells in order. The last cell only shows the clean-up plan unless you switch its widget to *delete everything*.
 
-Inside a notebook the scripts sign in as you, so no CLI profile is needed. Step 2 still needs workspace admin.
+Inside a notebook the scripts sign in as you, so no CLI profile is needed. One exception: run step 2 once from a terminal first, because Databricks won't create service principal OAuth secrets with a notebook's credentials (step 2 still needs workspace admin).
 
 ## The steps
 

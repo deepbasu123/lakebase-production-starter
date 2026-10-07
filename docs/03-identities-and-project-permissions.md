@@ -30,6 +30,8 @@ The script:
 2. Creates the two **service principals** and an **OAuth secret** for each, valid for 90 days, and stores the client ID and secret in the scope.
 3. Creates the **group** `acme-store-analysts` and adds you to it, so you can test logging in as the group later.
 
+**Run this step from a terminal, not a notebook.** When we ran it inside a Databricks notebook, creating the service principals worked, but creating their OAuth secrets came back `PermissionDenied`; the same call works from a laptop after `databricks auth login`. If you can't run it from a terminal, generate each secret in the UI instead: click your username, **Settings > Identity and access**, next to **Service principals** click **Manage**, pick the service principal, open the **Secrets** tab and click **Generate secret**. Then store it as shown in [Bring your own identities](#bring-your-own-identities).
+
 ### How a service principal signs in
 
 A service principal never has a password. It exchanges its client ID and secret for a short-lived workspace token (this is called machine-to-machine, or M2M, OAuth), then uses that token to ask Lakebase for a one-hour database token:

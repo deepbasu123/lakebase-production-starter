@@ -27,6 +27,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from databricks.sdk.errors import PermissionDenied
 from databricks.sdk.service import iam
 
 from lakebase_starter.config import load_config
@@ -62,9 +63,21 @@ def ensure_service_principal(display_name: str, secret_prefix: str) -> iam.Servi
     if has_secret(w, cfg.secret_scope, f"{secret_prefix}-client-secret"):
         skip("OAuth secret already stored in the secret scope")
     else:
-        secret = w.service_principal_secrets_proxy.create(
-            service_principal_id=sp.id, lifetime=SECRET_LIFETIME
-        )
+        try:
+            secret = w.service_principal_secrets_proxy.create(
+                service_principal_id=sp.id, lifetime=SECRET_LIFETIME
+            )
+        except PermissionDenied:
+            # In our testing this call is refused with a notebook's or job's own
+            # credentials, and works from a terminal after `databricks auth login`.
+            raise SystemExit(
+                f"Databricks refused to create an OAuth secret for '{display_name}' with these credentials.\n"
+                "This happens inside Databricks notebooks and jobs. Either run this step once from a terminal\n"
+                "(python scripts/02_create_demo_identities.py), or generate the secret in the UI (Settings >\n"
+                "Identity and access > Service principals > Manage > the service principal > Secrets >\n"
+                f"Generate secret) and store it with: databricks secrets put-secret {cfg.secret_scope} "
+                f"{secret_prefix}-client-secret (and {secret_prefix}-client-id, its application ID)."
+            ) from None
         put_secret(w, cfg.secret_scope, f"{secret_prefix}-client-id", sp.application_id)
         put_secret(w, cfg.secret_scope, f"{secret_prefix}-client-secret", secret.secret)
         ok(f"OAuth secret created (expires {secret.expire_time}) and stored as "
