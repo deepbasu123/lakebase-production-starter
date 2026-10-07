@@ -72,7 +72,8 @@ def ensure_service_principal(display_name: str, secret_prefix: str) -> iam.Servi
             # credentials, and works from a terminal after `databricks auth login`.
             raise SystemExit(
                 f"Databricks refused to create an OAuth secret for '{display_name}' with these credentials.\n"
-                "This happens inside Databricks notebooks and jobs. Either run this step once from a terminal\n"
+                "In our testing this happened inside a Databricks notebook; it also happens if you aren't a\n"
+                "workspace admin. Either run this step once from a terminal as a workspace admin\n"
                 "(python scripts/02_create_demo_identities.py), or generate the secret in the UI (Settings >\n"
                 "Identity and access > Service principals > Manage > the service principal > Secrets >\n"
                 f"Generate secret) and store it with: databricks secrets put-secret {cfg.secret_scope} "

@@ -4,7 +4,7 @@ A small, complete example of running **Databricks Lakebase** (managed Postgres) 
 
 It is written for people who are new to Databricks. Every script explains what it does while it runs, and every step has a guide in [`docs/`](docs/) that explains the why.
 
-> Everything in this repo was run end to end against a real Databricks workspace (AWS) in October 2026: from a laptop with Databricks CLI v1.18.0 and databricks-sdk 0.147.0, and as a notebook on serverless compute (Python 3.10). Where the platform surprised us, the docs say so.
+> Everything in this repo was run end to end against a real Databricks workspace (AWS) in October 2026: from a laptop with Databricks CLI v1.18.0 and databricks-sdk 0.147.0, and as a notebook on serverless compute (Python 3.10), with step 2 run from the laptop first. Where the platform surprised us, the docs say so.
 
 ## What you'll build
 
@@ -107,11 +107,12 @@ Then run the steps one at a time (recommended the first time, so you can read wh
 
 [`notebooks/lakebase_production_walkthrough`](notebooks/lakebase_production_walkthrough.py) runs the same steps inside your Databricks workspace, one cell at a time, with an explanation before each step and tables showing what it built (the synced products, the role memberships, the change history in Delta). To use it:
 
-1. In your workspace, click **Workspace > Create > Git folder** and paste `https://github.com/deepbasu123/lakebase-production-starter`.
-2. Open `notebooks/lakebase_production_walkthrough` and attach serverless compute. Run the settings cell once to create the widgets, fill in **catalog** and **warehouse_id**, then run it again.
-3. Run the cells in order. The last cell only shows the clean-up plan unless you switch its widget to *delete everything*.
+1. From a terminal, run step 2 once (`python scripts/02_create_demo_identities.py`), or have your own identities ready. See below for why.
+2. In your workspace, click **Workspace > Create > Git folder** and paste `https://github.com/deepbasu123/lakebase-production-starter`.
+3. Open `notebooks/lakebase_production_walkthrough` and attach serverless compute. Run the settings cell once to create the widgets, fill in **catalog** and **warehouse_id**, then run it again.
+4. Run the cells in order. The last cell only shows the clean-up plan unless you switch its widget to *delete everything*.
 
-Inside a notebook the scripts sign in as you, so no CLI profile is needed. One exception: run step 2 once from a terminal first, because Databricks won't create service principal OAuth secrets with a notebook's credentials (step 2 still needs workspace admin).
+Inside a notebook the scripts sign in as you, so no CLI profile is needed. The exception is step 2: in our test, creating service principal OAuth secrets with the notebook's credentials was refused (`PermissionDenied`), while the same call worked from a laptop. Step 2 also needs workspace admin.
 
 ## The steps
 
