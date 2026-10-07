@@ -27,7 +27,7 @@ Anyone in a workspace can create a Lakebase project: every workspace user gets t
 
 ## Laptop or notebook?
 
-You can run the steps from your laptop (the rest of this page) or from a Databricks notebook in your workspace. For the notebook, create a **Git folder** from `https://github.com/deepbasu123/lakebase-production-starter` (**Workspace > Create > Git folder**), open `notebooks/lakebase_production_walkthrough`, and follow its first cell. It installs the packages, signs in as you and runs the same scripts, so you can skip steps 1 to 4 below. The permission requirements above still apply.
+You can run the steps from your laptop (the rest of this page) or from a Databricks notebook in your workspace. For the notebook, create a **Git folder** from `https://github.com/deepbasu123/lakebase-production-starter` (**Workspace > Create > Git folder**), open `notebooks/lakebase_production_walkthrough`, and follow its first cell. It installs the packages, signs in as you and runs the same scripts, so you can skip steps 1 and 2 below. You still need the warehouse ID (step 3) and a catalog name for its widgets, and the permission requirements above still apply.
 
 ## 1. Get the code and install the Python packages
 

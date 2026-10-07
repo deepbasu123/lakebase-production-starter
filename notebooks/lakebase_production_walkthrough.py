@@ -16,14 +16,20 @@
 # MAGIC * Open this notebook from a **Git folder** of the repo (Workspace > Create > Git folder, then paste the repo URL), so it can find the scripts.
 # MAGIC * You need: workspace admin (step 2 creates service principals and a group), `CREATE SCHEMA` on a catalog that doesn't use default storage, a SQL warehouse, and Lakebase Change Data Feed switched on by a workspace admin on the **Previews** page.
 # MAGIC * It creates real, billable resources. The last cell removes them, but only when you choose to.
+# MAGIC * The workspace must be able to reach github.com to create the Git folder. If it can't, import the repo's files another way.
+# MAGIC * Names are fixed (project `acme-store`, the service principals, the group, the schemas). If several people use one workspace, give each person their own **project_id**, **catalog** and **secret_scope**.
 # MAGIC
-# MAGIC Run the cells in order. Every step can safely be run again.
+# MAGIC Run the cells in order. You can re-run any step: each one skips what already exists. Steps 7, 11 and 12 add a few test orders each time they run.
+# MAGIC
+# MAGIC Each script ends with a hint such as `Next: python scripts/...`. That's for people running it from a terminal; here, just run the next cell.
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ## Install the Python packages
 # MAGIC The Databricks SDK (with the Lakebase API) and psycopg, the Postgres driver. Python restarts afterwards so the new versions are used.
+# MAGIC
+# MAGIC pip may print an `ERROR: pip's dependency resolver ...` line about `protobuf` and another preinstalled package. In our test it was harmless: everything below ran fine.
 
 # COMMAND ----------
 
@@ -37,7 +43,7 @@ dbutils.library.restartPython()
 
 # MAGIC %md
 # MAGIC ## Settings
-# MAGIC Fill in the widgets at the top of the notebook. At a minimum, set **catalog** and **warehouse_id**. Everything else has a sensible default, and every setting is explained in [config.toml](https://github.com/deepbasu123/lakebase-production-starter/blob/main/config.toml).
+# MAGIC Run the next cell once: it creates the widgets at the top of the notebook and stops, asking for **warehouse_id**. Fill in **catalog** (one that doesn't use default storage) and **warehouse_id**, then run the cell again. Everything else has a sensible default, and every setting is explained in [config.toml](https://github.com/deepbasu123/lakebase-production-starter/blob/main/config.toml).
 
 # COMMAND ----------
 
@@ -117,6 +123,7 @@ from lakebase_starter.workspace import workspace_client
 
 cfg = load_config()
 w = workspace_client(cfg)
+history = uc.ident(cfg.catalog, cfg.history_schema)  # the Unity Catalog schema Lakebase Change Data Feed writes to
 print(f"Repo: {REPO}\nSigned in as: {w.current_user.me().user_name}\nProject: {cfg.project}")
 
 # COMMAND ----------
@@ -167,7 +174,7 @@ run_step("03_grant_project_permissions.py")
 
 # MAGIC %md
 # MAGIC ## Steps 4 and 5: Postgres roles, schema and tables (layer 2)
-# MAGIC Three **group roles** describe jobs: `store_owner` (owns the tables), `store_writer` (changes rows), `store_reader` (reads). Nobody logs in as them. Every identity that logs in gets exactly one as a membership. Then CI/CD, as the deployer service principal, runs the migration that creates the tables, owned by `store_owner`. [Guide](https://github.com/deepbasu123/lakebase-production-starter/blob/main/docs/04-database-roles-schemas-and-grants.md)
+# MAGIC Three **group roles** describe jobs: `store_owner` (owns the tables), `store_writer` (changes rows), `store_reader` (reads). Nobody logs in as them. Each application, pipeline and tool identity gets exactly one of them as a membership; you, the project owner, also keep admin rights. Then CI/CD, as the deployer service principal, runs the migration that creates the tables, owned by `store_owner`. [Guide](https://github.com/deepbasu123/lakebase-production-starter/blob/main/docs/04-database-roles-schemas-and-grants.md)
 
 # COMMAND ----------
 
@@ -230,6 +237,8 @@ display(postgres_table("SELECT order_id, customer_email, status, total_amount, c
 # MAGIC %md
 # MAGIC ## Step 8: stream Lakebase changes into Unity Catalog (Lakebase Change Data Feed)
 # MAGIC Lakebase Change Data Feed reads Postgres' change log and writes every insert, update and delete in the `store` schema to Delta tables, about every 15 seconds. No pipeline to run. [Guide](https://github.com/deepbasu123/lakebase-production-starter/blob/main/docs/07-sync-lakebase-to-unity-catalog.md)
+# MAGIC
+# MAGIC Expect one `[warn]` line here when you use the group that step 2 creates: Unity Catalog can't grant to a workspace-local group, so the analysts' Unity Catalog grant is skipped. With an account-level group it goes through.
 
 # COMMAND ----------
 
@@ -242,7 +251,6 @@ run_step("08_sync_lakebase_to_uc.py")
 
 # COMMAND ----------
 
-history = uc.ident(cfg.catalog, cfg.history_schema)
 display(spark.sql(f"""
     SELECT order_id, status, total_amount, _pg_change_type, _timestamp
     FROM {history}.lb_orders_history
@@ -327,7 +335,7 @@ display(spark.sql(query))
 
 # MAGIC %md
 # MAGIC ## Clean up
-# MAGIC With the **5. Last cell** widget on *plan only* (the default), this prints what would be deleted and deletes nothing. Switch it to *delete everything* and run the cell again to remove the project, the Unity Catalog schemas, the service principals, the group and the secret scope. The project is purged straight away, so its name is free again. [Details](https://github.com/deepbasu123/lakebase-production-starter/blob/main/docs/09-day-2-operations.md#clean-up)
+# MAGIC With the **5. Last cell** widget on *plan only* (the default), this prints what would be deleted and deletes nothing. (It says "Re-run with --yes"; in this notebook, that means switching the widget.) Switch it to *delete everything* and run the cell again to remove the project, the Unity Catalog schemas, the service principals, the group and the secret scope. The project is purged straight away, so its name is free again. [Details](https://github.com/deepbasu123/lakebase-production-starter/blob/main/docs/09-day-2-operations.md#clean-up)
 
 # COMMAND ----------
 
