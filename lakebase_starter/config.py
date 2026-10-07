@@ -11,9 +11,13 @@ You can also point at any file with the LAKEBASE_STARTER_CONFIG environment vari
 from __future__ import annotations
 
 import os
-import tomllib
 from dataclasses import dataclass
 from pathlib import Path
+
+try:
+    import tomllib  # Python 3.11 and newer
+except ModuleNotFoundError:  # Python 3.10, for example older serverless environments
+    import tomli as tomllib
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 

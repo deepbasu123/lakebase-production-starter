@@ -8,3 +8,5 @@ protobuf>=4.25.8,<7
 # Postgres driver (psycopg 3). [binary] bundles libpq, so there is nothing else to
 # install. [pool] adds psycopg_pool, the connection pool used by the app example.
 psycopg[binary,pool]>=3.2
+# TOML reader for Python 3.10 (Python 3.11 and newer have one built in).
+tomli>=2.0; python_version < "3.11"

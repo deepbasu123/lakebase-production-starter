@@ -82,7 +82,7 @@ flowchart TB
 
 ## Quick start
 
-You need a Databricks workspace with Lakebase, Python 3.11 or newer, and the Databricks CLI. [docs/01](docs/01-before-you-start.md) walks through each of these.
+You need a Databricks workspace with Lakebase, Python 3.10 or newer, and the Databricks CLI. [docs/01](docs/01-before-you-start.md) walks through each of these.
 
 ```bash
 git clone https://github.com/deepbasu123/lakebase-production-starter.git
