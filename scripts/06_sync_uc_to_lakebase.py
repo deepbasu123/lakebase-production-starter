@@ -37,7 +37,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from databricks.sdk import WorkspaceClient
 from databricks.sdk.errors import NotFound
 from databricks.sdk.service.postgres import (
     NewPipelineSpec,
@@ -50,10 +49,11 @@ from psycopg import sql
 
 from lakebase_starter import pg, uc
 from lakebase_starter.config import REPO_ROOT, load_config
+from lakebase_starter.workspace import workspace_client
 from lakebase_starter.ui import explain, heading, ok, skip, step
 
 cfg = load_config()
-w = WorkspaceClient(profile=cfg.profile)
+w = workspace_client(cfg)
 
 # Plain names for the Lakebase API, quoted names for SQL.
 source_table = f"{cfg.catalog}.{cfg.gold_schema}.products"

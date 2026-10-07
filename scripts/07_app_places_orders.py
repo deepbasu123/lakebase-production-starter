@@ -24,11 +24,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from databricks.sdk import WorkspaceClient
 from psycopg import sql
 
 from lakebase_starter import pg
 from lakebase_starter.config import load_config
+from lakebase_starter.workspace import workspace_client
 from lakebase_starter.identities import sign_in_as_service_principal
 from lakebase_starter.ui import heading, ok, step
 
@@ -40,7 +40,7 @@ args = parser.parse_args()
 CUSTOMERS = ["alex@example.com", "sam@example.com", "jordan@example.com", "riley@example.com", "casey@example.com"]
 
 cfg = load_config()
-w = WorkspaceClient(profile=cfg.profile)
+w = workspace_client(cfg)
 products_table = sql.Identifier(cfg.serving_schema, "products")
 
 heading("Step 7: the app places orders")

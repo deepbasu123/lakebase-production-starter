@@ -32,17 +32,17 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import psycopg
-from databricks.sdk import WorkspaceClient
 from psycopg import errors, sql
 
 from lakebase_starter import pg
 from lakebase_starter.config import load_config
+from lakebase_starter.workspace import workspace_client
 from lakebase_starter.identities import sign_in_as_service_principal
 from lakebase_starter.secret_scope import get_secret
 from lakebase_starter.ui import heading, ok, step, warn
 
 cfg = load_config()
-w = WorkspaceClient(profile=cfg.profile)
+w = workspace_client(cfg)
 products = sql.Identifier(cfg.serving_schema, "products")
 
 OPERATIONS = [

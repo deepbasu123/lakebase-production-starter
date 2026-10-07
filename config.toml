@@ -9,6 +9,8 @@
 [databricks]
 # A profile name from ~/.databrickscfg. Create one with:
 #   databricks auth login --host https://<your-workspace-url> --profile my-workspace
+# Inside a Databricks notebook, leave it empty (""): the scripts then sign in as
+# the notebook's user. notebooks/lakebase_production_walkthrough does this for you.
 profile = "my-workspace"
 
 # A SQL warehouse ID, used to run Unity Catalog SQL (create the source table,

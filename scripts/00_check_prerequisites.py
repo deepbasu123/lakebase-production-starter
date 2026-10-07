@@ -22,11 +22,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from databricks.sdk import WorkspaceClient
 from databricks.sdk.errors import NotFound, PermissionDenied
 from databricks.sdk.version import __version__ as sdk_version
 
 from lakebase_starter.config import config_path, load_config
+from lakebase_starter.workspace import workspace_client
 from lakebase_starter.ui import heading, ok, step, warn
 
 problems = []
@@ -35,8 +35,8 @@ heading("Step 0: prerequisites")
 print(f"    config file: {config_path()}")
 print(f"    databricks-sdk {sdk_version}")
 
-step(f"Signing in with profile '{cfg.profile}'")
-w = WorkspaceClient(profile=cfg.profile)
+step(f"Signing in with profile '{cfg.profile}'" if cfg.profile else "Signing in as the notebook's user")
+w = workspace_client(cfg)
 me = w.current_user.me()
 ok(f"{me.user_name} on {w.config.host}")
 if any(g.display == "admins" for g in me.groups or []):

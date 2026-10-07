@@ -32,20 +32,20 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from databricks.sdk import WorkspaceClient
 from databricks.sdk.errors import NotFound
 from databricks.sdk.service.postgres import CdfConfig, CdfState
 from psycopg import sql
 
 from lakebase_starter import pg, uc
 from lakebase_starter.config import REPO_ROOT, load_config
+from lakebase_starter.workspace import workspace_client
 from lakebase_starter.ui import explain, heading, ok, skip, step, warn
 
 # CDF config IDs use underscores ([a-z][a-z0-9_]*), unlike project and branch IDs, which use hyphens.
 CDF_CONFIG_ID = "store_to_unity_catalog"
 
 cfg = load_config()
-w = WorkspaceClient(profile=cfg.profile)
+w = workspace_client(cfg)
 history = uc.ident(cfg.catalog, cfg.history_schema)  # quoted, for SQL
 
 heading("Step 8: stream Lakebase -> Unity Catalog (Lakebase Change Data Feed)")

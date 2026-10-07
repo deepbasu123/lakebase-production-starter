@@ -33,18 +33,18 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.postgres import Role, RoleIdentityType, RoleRoleSpec
 from psycopg import sql
 
 from lakebase_starter import pg
 from lakebase_starter.config import REPO_ROOT, load_config
+from lakebase_starter.workspace import workspace_client
 from lakebase_starter.identities import application_id
 from lakebase_starter.secret_scope import ensure_scope, has_secret, put_secret
 from lakebase_starter.ui import explain, heading, ok, skip, step
 
 cfg = load_config()
-w = WorkspaceClient(profile=cfg.profile)
+w = workspace_client(cfg)
 deployer_role = application_id(w, cfg.deployer_sp)
 app_role = application_id(w, cfg.app_sp)
 

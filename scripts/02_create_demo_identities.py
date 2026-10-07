@@ -27,17 +27,17 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from databricks.sdk import WorkspaceClient
 from databricks.sdk.service import iam
 
 from lakebase_starter.config import load_config
+from lakebase_starter.workspace import workspace_client
 from lakebase_starter.secret_scope import ensure_scope, has_secret, put_secret
 from lakebase_starter.ui import explain, heading, ok, skip, step
 
 SECRET_LIFETIME = "7776000s"  # 90 days. Rotate before it expires (see docs/09-day-2-operations.md).
 
 cfg = load_config()
-w = WorkspaceClient(profile=cfg.profile)
+w = workspace_client(cfg)
 me = w.current_user.me()
 
 heading("Step 2: demo identities (service principals, group, secret scope)")

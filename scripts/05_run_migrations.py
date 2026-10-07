@@ -26,10 +26,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from databricks.sdk import WorkspaceClient
 
 from lakebase_starter import pg
 from lakebase_starter.config import REPO_ROOT, load_config
+from lakebase_starter.workspace import workspace_client
 from lakebase_starter.identities import sign_in_as_service_principal
 from lakebase_starter.ui import heading, ok, step
 
@@ -38,7 +38,7 @@ parser.add_argument("--branch", default="production", help="branch ID to migrate
 args = parser.parse_args()
 
 cfg = load_config()
-w = WorkspaceClient(profile=cfg.profile)
+w = workspace_client(cfg)
 
 heading(f"Step 5: schema migrations on branch '{args.branch}'")
 

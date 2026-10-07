@@ -37,15 +37,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.iam import AccessControlRequest, PermissionLevel
 
 from lakebase_starter.config import load_config
+from lakebase_starter.workspace import workspace_client
 from lakebase_starter.identities import application_id
 from lakebase_starter.ui import explain, heading, ok, step
 
 cfg = load_config()
-w = WorkspaceClient(profile=cfg.profile)
+w = workspace_client(cfg)
 
 heading("Step 3: project permissions (who can manage the Lakebase project)")
 

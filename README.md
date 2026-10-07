@@ -103,6 +103,16 @@ Then run the steps one at a time (recommended the first time, so you can read wh
 ./scripts/run_all.sh
 ```
 
+## Prefer a notebook?
+
+[`notebooks/lakebase_production_walkthrough`](notebooks/lakebase_production_walkthrough.py) runs the same steps inside your Databricks workspace, one cell at a time, with an explanation before each step and tables showing what it built (the synced products, the role memberships, the change history in Delta). To use it:
+
+1. In your workspace, click **Workspace > Create > Git folder** and paste `https://github.com/deepbasu123/lakebase-production-starter`.
+2. Open `notebooks/lakebase_production_walkthrough`, attach serverless compute, and fill in the **catalog** and **warehouse_id** widgets.
+3. Run the cells in order. The last cell only shows the clean-up plan unless you switch its widget to *delete everything*.
+
+Inside a notebook the scripts sign in as you, so no CLI profile is needed. Step 2 still needs workspace admin.
+
 ## The steps
 
 | Step | Script | Guide | What happens |
@@ -139,7 +149,8 @@ sql/
   migrations/               schema migrations, run by CI/CD as store_owner
   proposed/                 a migration that isn't in production yet (used in step 10)
 uc_sql/                     Databricks SQL for the lakehouse side (gold table, history views)
-lakebase_starter/           small helpers: config, connections, SQL on a warehouse, secrets
+lakebase_starter/           small helpers: config, sign-in, connections, SQL on a warehouse, secrets
+notebooks/                  the same steps as a guided Databricks notebook
 scripts/                    the numbered steps
 ```
 

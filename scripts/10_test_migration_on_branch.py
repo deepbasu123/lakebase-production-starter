@@ -34,7 +34,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from databricks.sdk import WorkspaceClient
 from databricks.sdk.common.types.fieldmask import FieldMask
 from databricks.sdk.errors import NotFound
 from databricks.sdk.service.postgres import Branch, BranchSpec, Endpoint, EndpointSpec, EndpointType
@@ -42,6 +41,7 @@ from google.protobuf.duration_pb2 import Duration
 
 from lakebase_starter import pg, uc
 from lakebase_starter.config import REPO_ROOT, load_config
+from lakebase_starter.workspace import workspace_client
 from lakebase_starter.identities import sign_in_as_service_principal
 from lakebase_starter.ui import explain, heading, ok, skip, step
 
@@ -60,7 +60,7 @@ if MIGRATION is None:
     raise SystemExit(f"Can't find {MIGRATION_NAME} in sql/proposed/ or sql/migrations/.")
 
 cfg = load_config()
-w = WorkspaceClient(profile=cfg.profile)
+w = workspace_client(cfg)
 deployer = sign_in_as_service_principal(w, cfg, "deployer")
 app = sign_in_as_service_principal(w, cfg, "app")
 
